@@ -98,40 +98,25 @@ const onFullscreenChange = () => {
 <template>
     <Teleport to="#fullscreen-target" v-if="showing">
         <div class="fullscreen">
-            <div
-                class="bg-img"
-                :style="{ backgroundImage: `url(${cover})` }"
-            ></div>
+            <div class="bg-img" :style="{ backgroundImage: `url(${cover})` }"></div>
             <div class="now">
-                <Cover
-                    :src="cover"
-                    :alt="title"
-                    class="cover"
-                    :class="{ playing }"
-                />
+                <Cover :name="player.song.title" :src="cover" :alt="title" class="cover" :class="{ playing }" />
                 <div class="details">
                     <p class="playlist">
                         playing from {{ currentPlaylistName }}
                     </p>
-                    <h1 class="title text-5xl mb-4">{{ player.song.title }}</h1>
-                    <h3 class="artist text-xl">
+                    <h1 class="title text-6xl mb-4">{{ player.song.title }}</h1>
+                    <h3 class="artist text-3xl">
                         {{ player.song.artist }}
                     </h3>
                 </div>
             </div>
-            <div
-                class="controls"
-                :class="{ showControls: showControls || !playing }"
-            >
+            <div class="controls" :class="{ showControls: showControls || !playing }">
                 <div class="progress">
                     <span class="text-xs text-muted text-right cursor-pointer">
                         {{ player.displayProgress }}
                     </span>
-                    <ProgressBar
-                        v-model="progressPercent"
-                        :max="1000"
-                        @change="(e) => player.seekPercent(e / 10)"
-                    />
+                    <ProgressBar v-model="progressPercent" :max="1000" @change="(e) => player.seekPercent(e / 10)" />
                     <span class="text-xs text-muted text-left">
                         {{ player.displayDuration }}
                     </span>
@@ -139,51 +124,33 @@ const onFullscreenChange = () => {
                 <div class="lower">
                     <div></div>
                     <div class="actions">
-                        <span
-                            class="icon cursor-pointer material-symbols-rounded ms-wght-300"
-                            @click="player.toggleShuffle"
-                        >
+                        <span class="icon cursor-pointer material-symbols-rounded ms-wght-300"
+                            @click="player.toggleShuffle">
                             {{ player.shuffleIcon }}
                         </span>
-                        <span
-                            class="icon cursor-pointer material-symbols-rounded ms-fill"
-                            @click="player.previous"
-                        >
+                        <span class="icon cursor-pointer material-symbols-rounded ms-fill" @click="player.previous">
                             skip_previous
                         </span>
-                        <span
-                            class="cursor-pointer material-symbols-rounded ms-fill text-5xl"
-                            @click="player.playPause"
-                        >
+                        <span class="cursor-pointer material-symbols-rounded ms-fill text-5xl"
+                            @click="player.playPause">
                             {{
                                 player.playing ? "pause_circle" : "play_circle"
                             }}
                         </span>
-                        <span
-                            class="icon cursor-pointer material-symbols-rounded ms-fill"
-                            @click="player.next"
-                        >
+                        <span class="icon cursor-pointer material-symbols-rounded ms-fill" @click="player.next">
                             skip_next
                         </span>
-                        <span
-                            class="icon cursor-pointer material-symbols-rounded ms-wght-300"
-                            @click="player.toggleRepeat"
-                        >
+                        <span class="icon cursor-pointer material-symbols-rounded ms-wght-300"
+                            @click="player.toggleRepeat">
                             {{ player.repeat }}
                         </span>
                     </div>
                     <div class="volume">
-                        <span
-                            class="icon cursor-pointer material-symbols-rounded ms-fill select-none"
-                            @click="player.toggleMute"
-                        >
+                        <span class="icon cursor-pointer material-symbols-rounded ms-fill select-none"
+                            @click="player.toggleMute">
                             {{ player.muteIcon }}
                         </span>
-                        <ProgressBar
-                            v-model="player.volume"
-                            :max="100"
-                            @change="(e) => player.setVolume(e)"
-                        />
+                        <ProgressBar v-model="player.volume" :max="100" @change="(e) => player.setVolume(e)" />
                     </div>
                 </div>
             </div>
@@ -193,7 +160,7 @@ const onFullscreenChange = () => {
 
 <style lang="scss" scoped>
 .cover {
-    width: min(40%, 400px);
+    width: min(40%, 600px);
     height: auto;
     max-width: 600px;
     border-radius: 20px;

@@ -34,11 +34,8 @@ export default {
     display: flex;
     flex-direction: row;
     padding: 1em;
-    border: var(--border-container);
     border-top: none;
     background: none;
-    backdrop-filter: blur(100px);
-    border-radius: 0 0 20px 20px;
 }
 
 .link {

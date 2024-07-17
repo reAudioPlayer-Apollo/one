@@ -42,7 +42,6 @@ const component = computed(() => {
     top: 0;
     z-index: 100;
     width: 100%;
-    background-color: var(--bg-base);
 }
 
 main {
@@ -51,7 +50,7 @@ main {
     padding: 1em;
     padding-top: calc(70px + 1em);
 
-    > div {
+    >div {
         height: 100%;
     }
 }

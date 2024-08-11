@@ -60,64 +60,29 @@ const animate = ref(false); // animations
         <BiggerPlayer ref="biggerPlayer" />
         <template v-if="player.loaded">
             <div class="upNow">
-                <Cover
-                    :class="{ playing, animate }"
-                    :src="cover"
-                    class="drop-shadow-2xl"
-                    type="track"
-                    with-ambient
-                    :name="player.song.title"
-                />
+                <Cover :class="{ playing, animate }" :src="cover" class="drop-shadow-2xl" type="track" with-ambient
+                    :name="player.song.title" />
                 <div :class="{ playing, animate }" class="blocks">
-                    <div
-                        :style="{ 'animation-delay': '0s' }"
-                        class="block"
-                    ></div>
-                    <div
-                        :style="{ 'animation-delay': '.25s' }"
-                        class="block"
-                    ></div>
-                    <div
-                        :style="{ 'animation-delay': '.5s' }"
-                        class="block"
-                    ></div>
+                    <div :style="{ 'animation-delay': '0s' }" class="block"></div>
+                    <div :style="{ 'animation-delay': '.25s' }" class="block"></div>
+                    <div :style="{ 'animation-delay': '.5s' }" class="block"></div>
                 </div>
             </div>
 
-            <Card
-                v-if="player.queue && player.playlist"
-                class="playlist-overflow drop-shadow-2xl relative"
-                :key="player.playlist.id"
-            >
-                <Playlist
-                    ref="playlistScroll"
-                    :playlist="{ ...player.playlist, queue: player.queue }"
-                    use-queue
-                    draggable
-                    @rearrange="player.rearrangeQueue"
-                />
+            <Card v-if="player.queue && player.playlist && !noPlaylist"
+                class="playlist-overflow drop-shadow-2xl relative" :key="player.playlist.id">
+                <Playlist ref="playlistScroll" :playlist="{ ...player.playlist, queue: player.queue }" use-queue
+                    draggable @rearrange="player.rearrangeQueue" />
             </Card>
             <div class="settings">
-                <span
+                <span class="iconButton material-symbols-rounded" @click="toggleMaximise">{{ maximised ?
+                    "fullscreen_exit" : "fullscreen" }}</span>
+                <span :style="{ transform: `rotate(${noPlaylist ? 0 : 180}deg)` }"
                     class="iconButton material-symbols-rounded"
-                    @click="toggleMaximise"
-                    >{{ maximised ? "fullscreen_exit" : "fullscreen" }}</span
-                >
-                <span
-                    :style="{ transform: `rotate(${noPlaylist ? 0 : 180}deg)` }"
-                    class="iconButton material-symbols-rounded"
-                    @click="() => (noPlaylist = !noPlaylist)"
-                    >menu_open</span
-                >
-                <span
-                    class="iconButton material-symbols-rounded"
-                    @click="() => (animate = !animate)"
-                    >{{ !animate ? "animation" : "motion_photos_off" }}</span
-                >
-                <span
-                    class="iconButton material-symbols-rounded"
-                    @click="$router.push('/player/insights')"
-                >
+                    @click="() => (noPlaylist = !noPlaylist)">menu_open</span>
+                <span class="iconButton material-symbols-rounded" @click="() => (animate = !animate)">{{ !animate ?
+                    "animation" : "motion_photos_off" }}</span>
+                <span class="iconButton material-symbols-rounded" @click="$router.push('/player/insights')">
                     insights
                 </span>
             </div>
@@ -127,10 +92,7 @@ const animate = ref(false); // animations
                 <div class="wrapper">
                     <h2>Nothing playing yet...</h2>
                     <div class="playlists">
-                        <playlist-item
-                            v-for="playlist in playlists"
-                            :playlist="playlist"
-                        />
+                        <playlist-item v-for="playlist in playlists" :playlist="playlist" />
                     </div>
                 </div>
             </div>
@@ -142,7 +104,7 @@ const animate = ref(false); // animations
 .bigPlayer .upNow img {
     width: 80%;
     height: auto;
-    max-width: 600px;
+    max-width: min(600px, calc(100vh - 300px));
     border-radius: 20px;
     transition: transform 0.5s;
     animation: pump 20s infinite ease-in-out;
@@ -166,26 +128,32 @@ div.body:has(.bigPlayer) {
         transform: scale(1);
         opacity: 0;
     }
+
     6% {
         transform: scale(1);
         opacity: 0;
     }
+
     7% {
         transform: scale(1);
         opacity: 1;
     }
+
     85% {
         transform: scale(1);
         opacity: 1;
     }
+
     95% {
         transform: scale(5);
         opacity: 0;
     }
+
     97% {
         transform: scale(0);
         opacity: 0;
     }
+
     100% {
         transform: scale(1);
         opacity: 0;
@@ -207,7 +175,7 @@ div.body:has(.bigPlayer) {
 
 .playlist-overflow {
     flex: 2;
-    height: calc(100% - 220px);
+    height: 70%;
     margin: 100px 0;
     overflow: hidden;
 
@@ -270,20 +238,25 @@ div.body:has(.bigPlayer) {
                 transform: scaleX(0);
                 transform-origin: 0% 50%;
             }
+
             1% {
                 transform: scaleX(0);
             }
+
             4% {
                 transform: scaleX(1);
                 transform-origin: 0% 50%;
             }
+
             6% {
                 transform: scaleX(1);
                 transform-origin: 100% 50%;
             }
+
             9% {
                 transform: scaleX(0);
             }
+
             100% {
                 transform: scaleX(0);
                 transform-origin: 100% 50%;

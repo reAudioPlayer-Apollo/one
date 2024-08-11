@@ -8,16 +8,11 @@
         <Loader />
     </div>
     <div v-else>
-        <add-album-to-playlist
-            v-if="selectedElement"
-            :id="
-                selectedElement.url?.replace(
-                    'https://open.spotify.com/album/',
-                    ''
-                )
-            "
-            ref="addReleaseRef"
-            :album="{
+        <add-album-to-playlist v-if="selectedElement" :id="selectedElement.url?.replace(
+            'https://open.spotify.com/album/',
+            ''
+        )
+            " ref="addReleaseRef" :album="{
                 id: selectedElement.url?.replace(
                     'https://open.spotify.com/album/',
                     ''
@@ -27,46 +22,26 @@
                 cover: selectedElement.cover,
                 href: selectedElement.url,
                 releaseDate: selectedElement.releaseDate,
-            }"
-            :artist="selectedElement.artist"
-            :cover="selectedElement.cover"
-            :href="selectedElement.url"
-            :title="selectedElement.title"
-        />
+            }" :artist="selectedElement.artist" :cover="selectedElement.cover" :href="selectedElement.url"
+            :title="selectedElement.title" />
         <div class="releases w-full">
             <div class="current">
                 <div class="w-max flex flex-col gap-4" v-if="nextInQueue">
-                    <Cover
-                        class="rounded-3xl"
-                        v-if="nextInQueue"
-                        :src="nextInQueue.cover"
-                        with-ambient
-                    />
+                    <Cover class="rounded-3xl" v-if="nextInQueue" :src="nextInQueue.cover" with-ambient />
                     <div class="flex justify-between w-full items-center">
                         <div class="flex gap-4 items-center">
-                            <span
-                                class="preview material-symbols-rounded ms-fill text-5xl cursor-pointer"
-                                @click="previewRelease(nextInQueue)"
-                            >
+                            <span class="preview material-symbols-rounded ms-fill text-5xl cursor-pointer"
+                                @click="previewRelease(nextInQueue)">
                                 play_circle
                             </span>
                             <div class="info">
                                 <h3 v-if="nextInQueue">
                                     <Marquee :text="nextInQueue.title" />
                                 </h3>
-                                <p
-                                    v-if="nextInQueue"
-                                    class="m-0 text-muted text-sm"
-                                >
-                                    <ArtistMarquee
-                                        :artist="nextInQueue.artist"
-                                    />
+                                <p v-if="nextInQueue" class="m-0 text-muted text-sm">
+                                    <ArtistMarquee :artist="nextInQueue.artist" />
                                 </p>
-                                <p
-                                    v-if="nextInQueue"
-                                    class="m-0 text-muted text-xs"
-                                    :title="nextInQueue.releaseDate"
-                                >
+                                <p v-if="nextInQueue" class="m-0 text-muted text-xs" :title="nextInQueue.releaseDate">
                                     {{
                                         formatReleaseDate(
                                             nextInQueue.releaseDate
@@ -76,24 +51,18 @@
                             </div>
                         </div>
                         <div class="actions">
-                            <span
-                                class="material-symbols-rounded cursor-pointer text-muted hover:text-primary"
-                                @click.stop="importRelease(nextInQueue)"
-                                title="Add to playlist"
-                            >
+                            <span class="material-symbols-rounded cursor-pointer text-muted hover:text-primary"
+                                @click.stop="importRelease(nextInQueue)" title="Add to playlist">
                                 add
                             </span>
-                            <span
-                                class="material-symbols-rounded cursor-pointer text-muted hover:text-primary"
+                            <span class="material-symbols-rounded cursor-pointer text-muted hover:text-primary"
                                 @click.stop="
                                     remember.find(
                                         (x) => x.url === nextInQueue.url
                                     )
                                         ? forgetRelease(nextInQueue)
                                         : rememberRelease(nextInQueue)
-                                "
-                                title="Pin"
-                            >
+                                    " title="Pin">
                                 {{
                                     remember.find(
                                         (x) => x.url === nextInQueue.url
@@ -102,11 +71,8 @@
                                         : "push_pin"
                                 }}
                             </span>
-                            <span
-                                class="material-symbols-rounded cursor-pointer text-muted hover:text-primary"
-                                @click.stop="seeRelease(nextInQueue)"
-                                title="Mark as seen"
-                            >
+                            <span class="material-symbols-rounded cursor-pointer text-muted hover:text-primary"
+                                @click.stop="seeRelease(nextInQueue)" title="Mark as seen">
                                 done_all
                             </span>
                         </div>
@@ -120,71 +86,43 @@
             </div>
             <Card class="queue w-full p-2 h-full flex flex-col gap-2 relative">
                 <div class="flex items-center gap-4 w-max">
-                    <h5
-                        class="cursor-pointer"
-                        :class="{ selected: activeQueue == 'unseen' }"
-                        @click="activeQueue = 'unseen'"
-                    >
+                    <h5 class="cursor-pointer" :class="{ selected: activeQueue == 'unseen' }"
+                        @click="activeQueue = 'unseen'">
                         Unseen
                     </h5>
-                    <h5
-                        class="cursor-pointer"
-                        :class="{ selected: activeQueue == 'out-today' }"
-                        @click="activeQueue = 'out-today'"
-                    >
+                    <h5 class="cursor-pointer" :class="{ selected: activeQueue == 'out-today' }"
+                        @click="activeQueue = 'out-today'">
                         Out Today
                     </h5>
-                    <h5
-                        class="cursor-pointer"
-                        :class="{ selected: activeQueue == 'watching' }"
-                        @click="activeQueue = 'watching'"
-                    >
+                    <h5 class="cursor-pointer" :class="{ selected: activeQueue == 'watching' }"
+                        @click="activeQueue = 'watching'">
                         Pinned
                     </h5>
-                    <h5
-                        class="cursor-pointer"
-                        :class="{ selected: activeQueue == 'seen' }"
-                        @click="activeQueue = 'seen'"
-                    >
+                    <h5 class="cursor-pointer" :class="{ selected: activeQueue == 'seen' }"
+                        @click="activeQueue = 'seen'">
                         Seen
                     </h5>
-                    <h5
-                        class="cursor-pointer"
-                        :class="{ selected: activeQueue == 'all' }"
-                        @click="activeQueue = 'all'"
-                    >
+                    <h5 class="cursor-pointer" :class="{ selected: activeQueue == 'all' }" @click="activeQueue = 'all'">
                         All
                     </h5>
                 </div>
-                <div
-                    class="flex justify-between mb-2"
-                    v-if="activeQueue === 'unseen' && queue.length"
-                >
-                    <span
-                        class="cursor-pointer text-sm text-muted hover:text-primary flex items-center gap-2"
-                        @click="forceReload"
-                    >
+                <div class="flex justify-between mb-2" v-if="activeQueue === 'unseen' && queue.length">
+                    <span class="cursor-pointer text-sm text-muted hover:text-primary flex items-center gap-2"
+                        @click="forceReload">
                         Refresh
                         <span class="material-symbols-rounded"> refresh </span>
                     </span>
-                    <span
-                        class="cursor-pointer text-sm text-muted hover:text-primary flex items-center gap-2"
-                        @click="queue.forEach(seeRelease)"
-                    >
+                    <span class="cursor-pointer text-sm text-muted hover:text-primary flex items-center gap-2"
+                        @click="queue.forEach(seeRelease)">
                         Mark all as seen
                         <span class="material-symbols-rounded"> done_all </span>
                     </span>
                 </div>
                 <div class="entries overflow-y-auto flex flex-col gap-2">
-                    <div
-                        class="entry"
-                        @click="
-                            nextInQueue = entry;
-                            previewRelease(entry);
-                        "
-                        v-for="entry in queue"
-                        v-if="queue.length"
-                    >
+                    <div class="entry" @click="
+                        nextInQueue = entry;
+                    previewRelease(entry);
+                    " v-for="entry in queue" v-if="queue.length">
                         <Cover class="rounded-xl" :src="entry.cover" />
                         <div class="info overflow-hidden">
                             <p class="m-0 overflow-hidden">
@@ -194,39 +132,26 @@
                                 <ArtistMarquee :artist="entry.artist" />
                             </p>
                         </div>
-                        <p
-                            class="text-sm m-0 text-muted"
-                            :title="entry.releaseDate"
-                        >
+                        <p class="text-sm m-0 text-muted" :title="entry.releaseDate">
                             {{ formatReleaseDate(entry.releaseDate) }}
                         </p>
-                        <span
-                            class="material-symbols-rounded cursor-pointer text-muted hover:text-primary"
-                            @click.stop="importRelease(entry)"
-                            title="Add to playlist"
-                        >
+                        <span class="material-symbols-rounded cursor-pointer text-muted hover:text-primary"
+                            @click.stop="importRelease(entry)" title="Add to playlist">
                             add
                         </span>
-                        <span
-                            class="material-symbols-rounded cursor-pointer text-muted hover:text-primary"
-                            @click.stop="
-                                remember.find((x) => x.url === entry.url)
-                                    ? forgetRelease(entry)
-                                    : rememberRelease(entry)
-                            "
-                            title="Pin"
-                        >
+                        <span class="material-symbols-rounded cursor-pointer text-muted hover:text-primary" @click.stop="
+                            remember.find((x) => x.url === entry.url)
+                                ? forgetRelease(entry)
+                                : rememberRelease(entry)
+                            " title="Pin">
                             {{
                                 remember.find((x) => x.url === entry.url)
                                     ? "playlist_remove"
                                     : "push_pin"
                             }}
                         </span>
-                        <span
-                            class="material-symbols-rounded cursor-pointer text-muted hover:text-primary"
-                            @click.stop="seeRelease(entry)"
-                            title="Mark as seen"
-                        >
+                        <span class="material-symbols-rounded cursor-pointer text-muted hover:text-primary"
+                            @click.stop="seeRelease(entry)" title="Mark as seen">
                             done_all
                         </span>
                     </div>
@@ -467,11 +392,11 @@ h5.selected {
 }
 
 .queue {
-    height: calc(100% - 150px);
+    height: 80%;
     overflow: hidden;
 }
 
-.queue > .entries {
+.queue>.entries {
     padding: 0.5em;
 }
 

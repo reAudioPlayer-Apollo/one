@@ -38,6 +38,9 @@ export default defineConfig({
             },
             workbox: {
                 navigateFallbackDenylist: [/^\/api/],
+
+                // ffmpeg
+                maximumFileSizeToCacheInBytes: 11 * 1024 * 1024,
             },
         }),
     ],

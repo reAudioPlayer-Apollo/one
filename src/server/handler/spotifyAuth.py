@@ -55,6 +55,10 @@ class SpotifyAuth(Logged):
                     file.write(json.dumps(data))
                 return True
 
+    @property
+    def _redirectUrl(self) -> str:
+        return REDIRECT.format(origin="http://localhost:1234")
+
     async def shouldAuth(self, forceRefresh: bool = False) -> bool:
         """Returns if the user should be authenticated"""
         if SpotifyAuth.isDisabled():
@@ -87,7 +91,7 @@ class SpotifyAuth(Logged):
     def authorizeUrl(self) -> str:
         """Returns the Spotify Authorize Url"""
         clientId, _ = SpotifyAuth._getSpotifyAuthData()
-        return f"https://accounts.spotify.com/authorize?client_id={clientId}&response_type=code&redirect_uri={REDIRECT}&scope={SCOPE}"  # pylint: disable=line-too-long
+        return f"https://accounts.spotify.com/authorize?client_id={clientId}&response_type=code&redirect_uri={self._redirectUrl}&scope={SCOPE}"  # pylint: disable=line-too-long
 
     @staticmethod
     def isDisabled() -> bool:
@@ -124,7 +128,7 @@ class SpotifyAuth(Logged):
         if SpotifyAuth.isDisabled():
             return None
         id_, secret = SpotifyAuth._getSpotifyAuthData()
-        return SpotifyOAuth(id_, secret, "localhost", scope=SCOPE)
+        return SpotifyOAuth(id_, secret, REDIRECT, scope=SCOPE, open_browser=False)
 
     async def getSpotifyConfig(self, _: web.Request) -> web.Response:
         """get(/api/config/spotify)"""
@@ -177,7 +181,7 @@ class SpotifyAuth(Logged):
         async with aiohttp.ClientSession() as session:
             async with session.post(
                 "https://accounts.spotify.com/api/token",
-                data={"grant_type": "authorization_code", "code": code, "redirect_uri": REDIRECT},
+                data={"grant_type": "authorization_code", "code": code, "redirect_uri": self._redirectUrl},
                 headers={
                     "Content-Type": "application/x-www-form-urlencoded",
                     "Authorization": SpotifyAuth._getSpotifyAuthHeader(),
@@ -193,6 +197,9 @@ class SpotifyAuth(Logged):
 
                     clearCache()
                     return JDict(data).ensure("access_token", str)
+                else:
+                    self._logger.error("failed to get spotify token, status: %s, text: %s, redirect url: %s",
+                        resp.status, await resp.text(), self._redirectUrl)
 
                 return None
 

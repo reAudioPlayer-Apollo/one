@@ -79,7 +79,7 @@ export interface IMetadata {
     plays: number;
 }
 
-interface ISongAlbum {
+export interface ISongAlbum {
     name: string;
     id: string | null;
     href: string;

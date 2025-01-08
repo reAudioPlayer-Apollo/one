@@ -50,7 +50,7 @@ export const useDataStore = defineStore({
             this.fetchPlaylists();
         },
         async fetchPlaylists(...params: string[]) {
-            if (params) {
+            if (params.length) {
                 console.log("fetching playlists", params);
                 for (const param of params) {
                     const i = this.playlists.findIndex(
@@ -61,6 +61,8 @@ export const useDataStore = defineStore({
                     }
                     this.playlists[i] = await getSinglePlaylist(param);
                 }
+
+                return;
             }
 
             const playlists = await getAllPlaylists();

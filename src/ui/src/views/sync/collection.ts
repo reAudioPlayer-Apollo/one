@@ -142,8 +142,9 @@ const addSongsToPlaylist = async (songs: ISyncableSong[]) => {
         return;
     }
 
-    const route = useRoute();
-    if (!route.path.startsWith("/playlist/")) {
+    const route = window.location.pathname;
+
+    if (!route.startsWith("/playlist/")) {
         Notifications.addError(
             "No playlist selected",
             "Please select open the playlist you want to add songs to",
@@ -152,7 +153,9 @@ const addSongsToPlaylist = async (songs: ISyncableSong[]) => {
         return;
     }
 
-    const playlist = useDataStore().getPlaylistById(route.params.id as string);
+    const playlistId = route.split("/")[2];
+
+    const playlist = useDataStore().getPlaylistById(playlistId);
 
     if (playlist.type !== "classic") {
         Notifications.addError(
@@ -163,9 +166,11 @@ const addSongsToPlaylist = async (songs: ISyncableSong[]) => {
         return;
     }
 
+    console.log("adding songs to playlist", playlist);
+
     await addSongs(
         playlist.id,
-        songs.map((x) => x.song as any)
+        songs.map((x) => x.song as IExternalSong)
     );
     Notifications.addSuccess(
         `Added ${songs.length} songs to ${playlist.name}`,

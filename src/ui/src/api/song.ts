@@ -14,9 +14,9 @@ import { createPlaylist } from "./playlist";
 import { useDownloaderStore } from "../store/downloader";
 import { useDataStore } from "../store/data";
 
-const updateDataStore = async () => {
+const updateDataStore = async (...playlistIds: string[]) => {
     const dataStore = useDataStore();
-    await dataStore.fetchPlaylists();
+    await dataStore.fetchPlaylists(...playlistIds);
 };
 
 /**
@@ -89,7 +89,7 @@ export const addSong = async (playlistId: string, song: IExternalSong) => {
         body: JSON.stringify(songToJson(song)),
     });
 
-    await updateDataStore();
+    await updateDataStore(playlistId);
 };
 
 /**
@@ -107,7 +107,7 @@ export const addSongs = async (playlistId: string, songs: IExternalSong[]) => {
         body: JSON.stringify(songs.map((song) => songToJson(song))),
     });
 
-    await updateDataStore();
+    await updateDataStore(playlistId);
 };
 
 /**
@@ -115,12 +115,12 @@ export const addSongs = async (playlistId: string, songs: IExternalSong[]) => {
  * @param playlistId the id of the playlist to add the song to
  * @param songId the id of the song to add, not the hash
  */
-export const addExistingSong = async (playlistId: number, songId: number) => {
+export const addExistingSong = async (playlistId: string, songId: number) => {
     await fetch(`/api/playlists/${playlistId}/tracks/${songId}`, {
         method: "POST",
     });
 
-    await updateDataStore();
+    await updateDataStore(playlistId);
 };
 
 /**

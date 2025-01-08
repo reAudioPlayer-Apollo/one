@@ -115,8 +115,11 @@ class Song(ISimpleTrack):
         if not name:
             name = dex.ensure("name", str)
 
+        albumDict = dex.optionalGet("album", dict)
+        album = albumDict.get("name", "")
+
         artist = dex.ensure("artist", str)
-        album = dex.ensure("album", str)
+        album = dex.ensure("album", str, album)
         cover = dex.ensure("cover", str)
         favourite = dex.ensure("favourite", bool)
         duration = _castDuration(dex.get("duration"))

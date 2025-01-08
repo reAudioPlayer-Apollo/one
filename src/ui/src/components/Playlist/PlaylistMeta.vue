@@ -21,7 +21,6 @@ import { updatePlaylistMetadata } from "@/api/playlist";
 import { useDataStore } from "@/store/data";
 import AddNewSong from "@/components/popups/AddNewSong.vue";
 import PlaylistContext from "@/components/contextMenus/PlaylistContext.vue";
-import AmbientBackground from "../image/AmbientBackground.vue";
 
 const props = defineProps({
     playlist: {
@@ -195,7 +194,11 @@ const playOrPausePlaylist = () => {
 </script>
 
 <template>
-    <PlaylistContext ref="contextmenu" :playlist="playlist" :can-edit="canEdit">
+    <PlaylistContext
+        ref="contextmenu"
+        :playlist="playlist"
+        :can-edit="canEdit"
+    >
         <FixedPlaylistHeader
             v-if="playlist"
             ref="fixedHeading"
@@ -203,8 +206,11 @@ const playOrPausePlaylist = () => {
             :playlist="playlist"
             @loadPlaylist="playOrPausePlaylist"
         />
-        <AddNewSong ref="addSongPopup" @update="data.fetchPlaylists()" />
-        <div v-observe-visibility="onObserveVisibility" class="upper relative">
+        <AddNewSong ref="addSongPopup" />
+        <div
+            v-observe-visibility="onObserveVisibility"
+            class="upper relative"
+        >
             <Cover
                 :placeholder="coverIcon"
                 :src="playlist.cover"
@@ -212,6 +218,7 @@ const playOrPausePlaylist = () => {
                 type="playlist"
                 :name="playlist.name"
                 @click="imgUpload?.click()"
+                :class="{ 'animate-size': playlist.songs.length > 7 }"
             />
             <input
                 ref="imgUpload"
@@ -425,8 +432,11 @@ const playOrPausePlaylist = () => {
         z-index: 1;
         max-height: 25vw;
         min-height: 10vw;
-        animation: size;
-        animation-timeline: scroll();
+
+        &.animate-size {
+            animation: size;
+            animation-timeline: scroll();
+        }
     }
 
     @keyframes size {

@@ -28,7 +28,6 @@ onMounted(() => {
         cursorWidth: 0,
         barWidth: 1,
         barGap: 3,
-        responsive: true,
         backend: "MediaElement",
     });
     audio.value.on("play", () => {
@@ -124,7 +123,10 @@ const playable: Playable = {
 defineExpose(playable);
 </script>
 <template>
-    <div id="waveform" @audioprocess="player.setProgress($event)" />
+    <div
+        id="waveform"
+        @audioprocess="player.setProgress($event)"
+    />
 </template>
 <style lang="scss">
 #waveform {

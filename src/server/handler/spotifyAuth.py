@@ -22,7 +22,8 @@ from helper.logged import Logged
 
 
 SCOPE = "user-library-read user-follow-read user-follow-modify"
-REDIRECT = "{origin}/api/spotify/callback"
+REDIRECT_ORIGIN = os.getenv("SPOTIFY_REDIRECT", "http://localhost:1234")
+REDIRECT = f"{REDIRECT_ORIGIN}/api/spotify/callback"
 
 
 class SpotifyAuth(Logged):
@@ -57,7 +58,7 @@ class SpotifyAuth(Logged):
 
     @property
     def _redirectUrl(self) -> str:
-        return REDIRECT.format(origin="http://localhost:1234")
+        return REDIRECT
 
     async def shouldAuth(self, forceRefresh: bool = False) -> bool:
         """Returns if the user should be authenticated"""
@@ -181,7 +182,11 @@ class SpotifyAuth(Logged):
         async with aiohttp.ClientSession() as session:
             async with session.post(
                 "https://accounts.spotify.com/api/token",
-                data={"grant_type": "authorization_code", "code": code, "redirect_uri": self._redirectUrl},
+                data={
+                    "grant_type": "authorization_code",
+                    "code": code,
+                    "redirect_uri": self._redirectUrl
+                },
                 headers={
                     "Content-Type": "application/x-www-form-urlencoded",
                     "Authorization": SpotifyAuth._getSpotifyAuthHeader(),
@@ -197,9 +202,9 @@ class SpotifyAuth(Logged):
 
                     clearCache()
                     return JDict(data).ensure("access_token", str)
-                else:
-                    self._logger.error("failed to get spotify token, status: %s, text: %s, redirect url: %s",
-                        resp.status, await resp.text(), self._redirectUrl)
+
+                self._logger.error("failed to get spotify token, status: %s, text: %s, redirect url: %s", # pylint: disable=line-too-long
+                    resp.status, await resp.text(), self._redirectUrl)
 
                 return None
 

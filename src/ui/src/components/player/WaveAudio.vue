@@ -12,7 +12,7 @@ import WaveSurfer from "wavesurfer.js";
 import themes from "../../assets/themes.json";
 import { useInsightStore } from "../../store/insight";
 
-const audio = ref(null);
+const audio = ref<WaveSurfer | null>(null);
 const audioElement = new Audio();
 
 onMounted(() => {
@@ -28,7 +28,8 @@ onMounted(() => {
         cursorWidth: 0,
         barWidth: 1,
         barGap: 3,
-        backend: "MediaElement",
+        height: document.querySelector("#waveform")?.clientHeight,
+        media: audioElement,
     });
     audio.value.on("play", () => {
         player.setPlaying(true);
@@ -44,9 +45,8 @@ onMounted(() => {
 
         forcePlay = true;
         player.onSongEnded();
-        console.log("Song ended");
     });
-    audio.value.on("waveform-ready", () => {
+    audio.value.on("ready", () => {
         if (!audio.value) return;
         player.setDuration(audio.value.getDuration());
 
@@ -55,11 +55,13 @@ onMounted(() => {
             forcePlay = false;
         }
     });
+    const context = new AudioContext();
 
-    var context = audio.value.backend.ac as AudioContext;
-    var source = context.createMediaElementSource(audioElement);
-    source.connect(context.destination);
-    insights.setSource(source, context);
+    audio.value.once("play", () => {
+        const source = context.createMediaElementSource(audioElement);
+        source.connect(context.destination);
+        insights.setSource(source, context);
+    });
 });
 
 const player = usePlayerStore();
@@ -68,7 +70,7 @@ let forcePlay = false;
 
 onMounted(() => {
     audioElement.src = player.stream;
-    audio.value.load(audioElement);
+    audio.value.load(player.stream);
 });
 
 watch(
@@ -79,7 +81,7 @@ watch(
         }
 
         audioElement.src = player.stream;
-        audio.value.load(audioElement);
+        audio.value.load(player.stream);
         player.setPlaying(false);
     }
 );
@@ -105,7 +107,7 @@ const setVolume = (volume: number) => {
 };
 
 const setMute = (muted: boolean) => {
-    audio.value.setMute(muted);
+    audio.value.setMuted(muted);
 };
 
 onMounted(() => {
@@ -129,11 +131,13 @@ defineExpose(playable);
     />
 </template>
 <style lang="scss">
-#waveform {
-    wave,
-    canvas {
-        width: 100%;
-        height: calc(var(--h-player) / 2 - 1em) !important;
-    }
+#waveform,
+#waveform canvas {
+    width: 100%;
+    height: calc(var(--h-player) / 2 - 1em) !important;
+}
+
+#waveform .canvases {
+    min-height: unset;
 }
 </style>

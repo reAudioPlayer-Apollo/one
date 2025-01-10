@@ -12,7 +12,6 @@ from pyaddict import JDict
 from meta.spotify import SpotifyAudioFeatures
 from dataModel.track import BasicSpotifyItem, SpotifyTrack
 from db.table.songs import SongModel
-from helper.asyncThread import asyncRunInThreadWithReturn
 
 if TYPE_CHECKING:
     from meta.spotify import Spotify
@@ -185,7 +184,7 @@ class SongMetadata:
 
     @classmethod
     async def fetch(
-        cls, spotify: Spotify, track: SpotifyTrack, oldMetadata: Optional[SongMetadata] = None
+        cls, track: SpotifyTrack, oldMetadata: Optional[SongMetadata] = None
     ) -> Optional[SongMetadata]:
         """fetch metadata from spotify"""
         metadata = cls()
@@ -193,11 +192,7 @@ class SongMetadata:
             metadata.plays = oldMetadata.plays
 
         metadata.spotify = SpotifyMetadata(track.id)
-        features = await asyncRunInThreadWithReturn(spotify.audioFeatures, track.id)
-        if not features:
-            return None
         metadata.spotify.update(
-            features=features.unwrap(),
             popularity=track.popularity,
             album=track.albumItem,
             artists=track.artistItems,

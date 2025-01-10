@@ -458,22 +458,6 @@ class Spotify(Logged, metaclass=Singleton):  # pylint: disable=too-many-public-m
 
     @_connectionRequired
     @_mayFail
-    def recommendations(
-        self, seedArtists: List[str], seedTracks: List[str], seedGenres: List[str]
-    ) -> SpotifyResult[List[SpotifyTrack]]:
-        """Returns recommendations"""
-        self._logger.debug("Getting recommendations")
-        assert self._spotify is not None
-        if len([*seedTracks, *seedArtists, *seedGenres]) < 1:
-            return SpotifyResult.successResult([])
-        tracks = self._spotify.recommendations(
-            seed_artists=seedArtists, seed_tracks=seedTracks, seed_genres=seedGenres, limit=10
-        )
-        tracks = JDict(tracks).ensure("tracks", list)
-        return SpotifyResult.successResult([SpotifyTrack(track) for track in tracks])
-
-    @_connectionRequired
-    @_mayFail
     def userPlaylists(self) -> SpotifyResult[List[SpotifyPlaylist]]:
         """Returns the user's playlists"""
         self._logger.debug("Getting user playlists")
@@ -535,17 +519,6 @@ class Spotify(Logged, metaclass=Singleton):  # pylint: disable=too-many-public-m
         assert self._spotify is not None
         self._spotify.user_unfollow_artists([artistId])
         return SpotifyResult.successResult(None)
-
-    @_connectionRequired
-    @_mayFail
-    def audioFeatures(self, trackId: str) -> SpotifyResult[SpotifyAudioFeatures]:
-        """Returns the audio features of a track"""
-        self._logger.debug("Getting audio features for track %s", trackId)
-        assert self._spotify is not None
-        features = self._spotify.audio_features([trackId])
-        if not features:
-            return SpotifyResult.errorResult(SpotifyState.NotFound)
-        return SpotifyResult.successResult(SpotifyAudioFeatures(JDict(features[0])))
 
     @_connectionRequired
     @_mayFail

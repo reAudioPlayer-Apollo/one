@@ -50,7 +50,7 @@ class Metadata:
     async def toExtendedDict(self) -> Dict[str, Any]:  # extend with spotify
         """serialise"""
         if isinstance(self._track, SpotifyTrack):
-            data = await SongMetadata.fetch(self._spotify, self._track)
+            data = await SongMetadata.fetch(self._track)
             self._track.addMetadata(data)
         return self.toDict()
 

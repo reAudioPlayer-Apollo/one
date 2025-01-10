@@ -377,7 +377,7 @@ class MetaHandler:  # pylint: disable=too-many-public-methods
         if not spotifySong:
             return web.HTTPNotFound(text="song not found")
 
-        metadata = await SongMetadata.fetch(self._spotify, spotifySong, song.metadata)
+        metadata = await SongMetadata.fetch(spotifySong, song.metadata)
         if not metadata:
             return web.HTTPNotFound(text="metadata not found")
 
@@ -390,70 +390,10 @@ class MetaHandler:  # pylint: disable=too-many-public-methods
 
         return await asyncRunInThreadWithReturn(_implement)
 
-    @withObjectPayload(Object({"id": Integer().min(1).coerce()}), inPath=True)
-    async def spotifyRecommendSong(self, payload: Dict[str, Any]) -> web.Response:
+    async def spotifyRecommendSong(self, _: web.Request) -> web.Response:
         """get(/api/spotify/recommendations/{id})"""
-        id_: int = payload["id"]
-        model = await self._dbManager.songs.byId(id_)
-        if not model:
-            return web.HTTPNotFound(text="song not found")
-        song = Song(model)
-        if not song.metadata:
-            return web.HTTPNotFound(text="metadata not found")
-        if not song.metadata.spotify:
-            return web.HTTPNotFound(text="spotify metadata not found")
-        if not song.metadata.spotify.id:
-            return web.HTTPNotFound(text="spotify id not found")
+        return web.json_response([])
 
-        result = self._spotify.recommendations(
-            [artist.id for artist in song.metadata.spotify.artists or []],
-            [song.metadata.spotify.id],
-            [],
-        )
-        if not result:
-            return result.httpResponse()
-        tracks = result.unwrap()
-        return web.json_response([track.toDict() for track in tracks])
-
-    @withObjectPayload(
-        Object(
-            {
-                "query": String().min(1).optional(),
-                "artists": Array(String().min(22).max(22)).optional(),
-                "tracks": Array(String().min(22).max(22)).optional(),
-                "genres": Array(String().min(1)).optional(),
-            }
-        ),
-        inBody=True,
-    )
-    async def spotifyRecommend(self, payload: Dict[str, Any]) -> web.Response:
+    async def spotifyRecommend(self, _: web.Request) -> web.Response:
         """post(/api/spotify/recommendations)"""
-
-        def _implement() -> SpotifyResult[List[Dict[str, Any]]]:
-            dex = JDict(payload)
-            query = dex.optionalGet("query", str)
-
-            artists = dex.ensure("artists", list)
-            tracks = dex.ensure("tracks", list)
-            genres = dex.ensure("genres", list)
-
-            if query:  # find track first
-                result = self._spotify.searchTrack(query)
-                if result:
-                    queryTracks = result.unwrap()
-                    if len(queryTracks) > 0:
-                        tracks.append(queryTracks[0].id)
-
-            result = self._spotify.recommendations(artists, tracks, genres)
-
-            if not result:
-                return result.transform([])
-
-            return result.transform([track.toDict() for track in result.unwrap()])
-
-        data = await asyncRunInThreadWithReturn(_implement)
-
-        if not data:
-            return data.httpResponse()
-
-        return web.json_response(data=data.unwrap())
+        return web.json_response(data=[])

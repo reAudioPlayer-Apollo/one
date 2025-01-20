@@ -124,7 +124,7 @@ class PlayerHandler:
         song.favourite = jdata.ensure("favourite", bool, song.favourite)
         song.source = jdata.ensure("source", str, song.source)
         song.spotify = jdata.ensure("spotify", str, song.spotify)
-        return web.Response(status=200)
+        return web.json_response(song.toDict())
 
     async def postShuffle(self, request: web.Request) -> web.Response:
         """post(/api/player/shuffle)"""

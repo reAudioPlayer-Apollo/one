@@ -8,7 +8,7 @@ const restart = () => {
     fetch("/api/system/kill");
 };
 const restartNginx = () => {
-    fetch("/api/system/restart/nginx");
+    fetch("/api/system/nginx/restart");
 };
 </script>
 <template>

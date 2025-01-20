@@ -280,6 +280,7 @@ export const usePlayerStore = defineStore({
             )}`;
         },
         stream(state) {
+            if (state.song.id < 0) return null;
             return `/api/player/stream/${state.song.id}`;
         },
         cover(state) {

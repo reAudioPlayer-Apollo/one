@@ -68,10 +68,14 @@ const player = usePlayerStore();
 const insights = useInsightStore();
 let forcePlay = false;
 
-onMounted(() => {
-    audioElement.src = player.stream;
-    audio.value.load(player.stream);
-});
+const updateSrc = () => {
+    if (player.stream) {
+        audioElement.src = player.stream;
+        audio.value.load(player.stream);
+    }
+};
+
+onMounted(updateSrc);
 
 watch(
     () => player.song.id,
@@ -80,8 +84,7 @@ watch(
             forcePlay = true;
         }
 
-        audioElement.src = player.stream;
-        audio.value.load(player.stream);
+        updateSrc();
         player.setPlaying(false);
     }
 );

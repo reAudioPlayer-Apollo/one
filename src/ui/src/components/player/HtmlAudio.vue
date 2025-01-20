@@ -17,7 +17,9 @@ onMounted(() => {
     audio.value.src = null;
     audio.value.src = player.stream;
 
-    audio.value.load();
+    if (player.stream != null) {
+        audio.value.load();
+    }
 
     audio.value.onloadedmetadata = () => {
         if (!audio.value) return;

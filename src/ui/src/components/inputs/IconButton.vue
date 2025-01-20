@@ -53,7 +53,8 @@ defineProps({
 </template>
 
 <style lang="scss" scoped>
-@import "@/assets/scss/tailwind-extended.scss";
+@use "sass:color";
+@use "@/assets/scss/tailwind-extended.scss";
 
 button span.material-symbols-rounded {
     font-variation-settings: "wght" 400;
@@ -90,7 +91,7 @@ button.danger {
     background-color: $danger;
 
     &.disabled {
-        background-color: darken($danger, 10%);
+        background-color: color.adjust($danger, $lightness: -10%);
         color: darkgrey;
     }
 }

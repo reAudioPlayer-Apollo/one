@@ -12,8 +12,19 @@ const player = usePlayerStore();
 const insights = useInsightStore();
 const audio = ref<HTMLAudioElement>(null);
 let forcePlay = false;
+let initialised = false;
+
+const initialise = () => {
+    var AudioContext = window.AudioContext;
+    var context = new AudioContext();
+    var source = context.createMediaElementSource(audio.value);
+    source.connect(context.destination);
+    insights.setSource(source, context);
+};
 
 onMounted(() => {
+    if (initialised) return;
+
     audio.value.src = null;
     audio.value.src = player.stream;
 
@@ -30,6 +41,10 @@ onMounted(() => {
             forcePlay = false;
         }
     };
+
+    setVolume(player.volume);
+
+    initialised = true;
 });
 
 watch(
@@ -53,6 +68,7 @@ const onSongEnded = () => {
 
 const play = () => {
     try {
+        initialise();
         audio.value.play();
     } catch (_) {}
 };
@@ -74,16 +90,6 @@ const setVolume = (volume: number) => {
 const setMute = (muted: boolean) => {
     audio.value.muted = muted;
 };
-
-onMounted(() => {
-    setVolume(player.volume);
-
-    var AudioContext = window.AudioContext;
-    var context = new AudioContext();
-    var source = context.createMediaElementSource(audio.value);
-    source.connect(context.destination);
-    insights.setSource(source, context);
-});
 
 const playable: Playable = {
     play,

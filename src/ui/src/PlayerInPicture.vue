@@ -4,8 +4,15 @@
   -->
 
 <template>
-    <div v-if="!disabled" ref="player" class="playerInPicture">
-        <div :class="{ minimised }" class="header">
+    <div
+        v-if="!disabled"
+        ref="player"
+        class="playerInPicture"
+    >
+        <div
+            :class="{ minimised }"
+            class="header"
+        >
             <div class="title">
                 <Marquee :text="name" />
             </div>
@@ -22,7 +29,11 @@
                 >
             </div>
         </div>
-        <div :class="{ minimised }" class="frame" v-html="el" />
+        <div
+            :class="{ minimised }"
+            class="frame"
+            v-html="el"
+        />
     </div>
 </template>
 
@@ -219,18 +230,18 @@ $mobileWidth: 950px;
     z-index: 2000;
     width: 30%;
 
-    @media screen and (max-width: $mobileWidth) {
-        width: calc(100% - 16px);
-        left: 8px !important;
-        bottom: 8px !important;
-    }
-
     border-radius: 8px;
     display: flex;
     flex-direction: column;
     background: var(--bg-base-lt);
     overflow: hidden;
     box-shadow: 0 0 100px 3px rgba(0, 0, 0, 0.8);
+
+    @media screen and (max-width: $mobileWidth) {
+        width: calc(100% - 16px);
+        left: 8px !important;
+        bottom: 8px !important;
+    }
 
     .header {
         padding: 0px 8px 8px 8px;

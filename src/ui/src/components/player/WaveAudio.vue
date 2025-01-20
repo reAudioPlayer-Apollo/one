@@ -55,6 +55,20 @@ onMounted(() => {
             forcePlay = false;
         }
     });
+
+    updateSrc();
+    setVolume(player.volume);
+});
+
+const player = usePlayerStore();
+const insights = useInsightStore();
+let forcePlay = false;
+let initialised = false;
+
+const initialise = () => {
+    if (initialised) return;
+
+    var AudioContext = window.AudioContext;
     const context = new AudioContext();
 
     audio.value.once("play", () => {
@@ -62,11 +76,9 @@ onMounted(() => {
         source.connect(context.destination);
         insights.setSource(source, context);
     });
-});
 
-const player = usePlayerStore();
-const insights = useInsightStore();
-let forcePlay = false;
+    initialised = true;
+};
 
 const updateSrc = () => {
     if (player.stream) {
@@ -74,8 +86,6 @@ const updateSrc = () => {
         audio.value.load(player.stream);
     }
 };
-
-onMounted(updateSrc);
 
 watch(
     () => player.song.id,
@@ -91,6 +101,7 @@ watch(
 
 const play = () => {
     try {
+        initialise();
         audio.value.play();
     } catch (_) {}
 };
@@ -112,10 +123,6 @@ const setVolume = (volume: number) => {
 const setMute = (muted: boolean) => {
     audio.value.setMuted(muted);
 };
-
-onMounted(() => {
-    setVolume(player.volume);
-});
 
 const playable: Playable = {
     play,

@@ -7,7 +7,10 @@
     <div
         class="header hideIfMobile grid grid-cols-3 justify-between drop-shadow-md"
     >
-        <Logo class="hideIfMobile logo" @click="$router.push('/')" />
+        <Logo
+            class="hideIfMobile logo"
+            @click="$router.push('/')"
+        />
         <div class="search flex flex-row">
             <nav-entry
                 class="sm:ml-0 mr-2"
@@ -38,7 +41,10 @@
             </InputWithAutoComplete>
         </div>
         <div class="mr-2 flex flex-row gap-2">
-            <div class="download" ref="downloadIcon">
+            <div
+                class="download"
+                ref="downloadIcon"
+            >
                 <nav-entry
                     href="/download"
                     icon="download"
@@ -204,19 +210,19 @@ let submit = () => {
 </script>
 
 <style lang="scss" scoped>
-.download-anim {
-    @keyframes anim {
-        /* bottom to top, fading out */
-        0% {
-            opacity: 1;
-            transform: translateY(500px);
-        }
-        100% {
-            opacity: 0;
-            transform: translateY(0%);
-        }
+@keyframes anim {
+    /* bottom to top, fading out */
+    0% {
+        opacity: 1;
+        transform: translateY(500px);
     }
+    100% {
+        opacity: 0;
+        transform: translateY(0%);
+    }
+}
 
+.download-anim {
     color: var(--fg-base-dk);
     animation: anim 0.5s ease-out forwards;
 }

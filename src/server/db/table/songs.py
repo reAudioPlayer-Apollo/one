@@ -265,6 +265,7 @@ class SongModel(IModel, ITrack):  # pylint: disable=too-many-public-methods
     @spotify.setter
     def spotify(self, value: str) -> None:
         if value == self._spotify:
+            print("spotify is the same")
             return
         self._spotify = value
         self._fireChanged()

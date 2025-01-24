@@ -130,10 +130,7 @@ class SpotifyMetadata:
         """Create from sql"""
         if not row:
             return None
-        try:
-            return SpotifyMetadata.fromDict(JDict.fromString(row))
-        except:  # pylint: disable=bare-except
-            return None
+        return SpotifyMetadata.fromDict(JDict.fromString(row))
 
     def toStr(self) -> str:
         """Convert to string"""

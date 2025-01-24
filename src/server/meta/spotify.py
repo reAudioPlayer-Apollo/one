@@ -191,8 +191,10 @@ class SpotifyMode(Enum):
         return SpotifyMode.Major
 
     @staticmethod
-    def fromName(name: str) -> SpotifyMode:
+    def fromName(name: Optional[str]) -> Optional[SpotifyMode]:
         """Returns the mode from a name"""
+        if name is None:
+            return None
         if name == "Major":
             return SpotifyMode.Major
         return SpotifyMode.Minor
@@ -226,8 +228,10 @@ class SpotifyKey(Enum):
         return SpotifyKey(value)
 
     @staticmethod
-    def fromName(name: str) -> SpotifyKey:
+    def fromName(name: Optional[str]) -> Optional[SpotifyKey]:
         """Returns the key from a name"""
+        if name is None:
+            return None
         name = name.replace("#", "Sharp")
         for key in SpotifyKey:
             if key.name == name:
@@ -254,27 +258,27 @@ class SpotifyAudioFeatures:
     )
 
     def __init__(self, data: JDict) -> None:
-        self._acousticness = data.ensureCast("acousticness", float)
-        self._danceability = data.ensureCast("danceability", float)
-        self._energy = data.ensureCast("energy", float)
-        self._instrumentalness = data.ensureCast("instrumentalness", float)
-        self._liveness = data.ensureCast("liveness", float)
-        self._loudness = data.ensureCast("loudness", float)
+        self._acousticness = data.optionalCast("acousticness", float)
+        self._danceability = data.optionalCast("danceability", float)
+        self._energy = data.optionalCast("energy", float)
+        self._instrumentalness = data.optionalCast("instrumentalness", float)
+        self._liveness = data.optionalCast("liveness", float)
+        self._loudness = data.optionalCast("loudness", float)
 
         key = SpotifyKey.fromInt(data.optionalGet("key", int))  # spotify
         if key is None:
-            key = SpotifyKey.fromName(data.assertGet("key", str))  # cache
+            key = SpotifyKey.fromName(data.optionalGet("key", str))  # cache
         self._key = key
 
         mode = SpotifyMode.fromInt(data.optionalGet("mode", int))  # spotify
         if mode is None:
-            mode = SpotifyMode.fromName(data.assertGet("mode", str))  # cache
+            mode = SpotifyMode.fromName(data.optionalGet("mode", str))  # cache
         self._mode = mode
 
-        self._speechiness = data.ensureCast("speechiness", float)
-        self._tempo = data.ensureCast("tempo", float)
-        self._timeSignature = data.ensureCast("time_signature", int)
-        self._valence = data.ensureCast("valence", float)
+        self._speechiness = data.optionalCast("speechiness", float)
+        self._tempo = data.optionalCast("tempo", float)
+        self._timeSignature = data.optionalCast("time_signature", int)
+        self._valence = data.optionalCast("valence", float)
 
     @staticmethod
     def fromSql(data: Optional[str]) -> Optional[SpotifyAudioFeatures]:
@@ -290,10 +294,10 @@ class SpotifyAudioFeatures:
             "danceability": self._danceability,
             "energy": self._energy,
             "instrumentalness": self._instrumentalness,
-            "key": self._key.toStr(),
+            "key": self._key.toStr() if self._key else None,
             "liveness": self._liveness,
             "loudness": self._loudness,
-            "mode": self._mode.name,
+            "mode": self._mode.name if self._mode else None,
             "speechiness": self._speechiness,
             "tempo": self._tempo,
             "time_signature": self._timeSignature,

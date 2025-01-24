@@ -364,7 +364,10 @@ class MetaHandler:  # pylint: disable=too-many-public-methods
 
         if not forceFetch:
             if song.metadata and song.metadata.spotify:
+                self._logger.debug("returning cached metadata")
                 return web.json_response(song.metadata.toDict())
+
+        self._logger.debug("fetching metadata from spotify, %s", song.metadata.toDict())
 
         spotifyId: Optional[str] = None
         if song.metadata and song.metadata.spotify:
@@ -382,6 +385,9 @@ class MetaHandler:  # pylint: disable=too-many-public-methods
             return web.HTTPNotFound(text="metadata not found")
 
         song.metadata = metadata
+
+        self._logger.debug("fetching metadata from spotify, %s", song.metadata.toDict())
+
         return web.json_response(metadata.toDict())
 
     async def _searchOnSpotify(self, query: str, limit: int) -> SpotifyResult[List[SpotifyTrack]]:

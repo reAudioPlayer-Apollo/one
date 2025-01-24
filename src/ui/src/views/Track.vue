@@ -82,7 +82,9 @@ const load = async (spotifyId: string = null) => {
     recommendations.value = await getRecommendations(song.value.id);
     circles.value = [];
 
-    for (let [key, value] of Object.entries(metadata.value.spotify.features)) {
+    for (let [key, value] of Object.entries(
+        metadata.value.spotify.features ?? {}
+    )) {
         if (
             ["key", "mode", "tempo", "duration_ms", "time_signature"].includes(
                 key
@@ -137,7 +139,11 @@ const onSpotifyUrlClick = () => {
 };
 </script>
 <template>
-    <AmbientBackground v-if="song" :src="song.cover" class="-z-10" />
+    <AmbientBackground
+        v-if="song"
+        :src="song.cover"
+        class="-z-10"
+    />
     <div class="track p-4">
         <EditSong
             v-if="song"
@@ -149,14 +155,11 @@ const onSpotifyUrlClick = () => {
         <div v-else>
             <div class="track__data">
                 <div class="upper">
-                    <Cover :src="song.cover" class="max-w-sm rounded-xl" />
-                    <div
-                        :class="{
-                            'justify-end': metadata,
-                            'justify-center': !metadata,
-                        }"
-                        class="track__info__details flex flex-col"
-                    >
+                    <Cover
+                        :src="song.cover"
+                        class="max-w-sm rounded-xl"
+                    />
+                    <div class="track__info__details justify-end flex flex-col">
                         <div class="trac__info__details__normal">
                             <h3 class="text-secondary my-0 text-2xl font-bold">
                                 <ArtistMarquee
@@ -188,13 +191,12 @@ const onSpotifyUrlClick = () => {
                                 </h1>
                             </div>
                         </div>
-                        <template v-if="metadata && metadata.spotify.features">
+                        <template v-if="metadata?.spotify">
                             <div
-                                v-if="metadata && metadata.spotify.features"
                                 class="features flex flex-row gap-4 pt-4 pb-2 overflow-x-auto"
                             >
                                 <FactCard
-                                    v-if="metadata"
+                                    v-if="metadata?.spotify?.features?.key"
                                     :primary-text="
                                         metadata.spotify.features.key +
                                         ' ' +
@@ -204,13 +206,13 @@ const onSpotifyUrlClick = () => {
                                     secondary-text="Key"
                                 />
                                 <FactCard
-                                    v-if="metadata"
+                                    v-if="metadata?.spotify?.features?.key"
                                     :primary-text="getCamelotKey(metadata)"
                                     class="w-full"
                                     secondary-text="Camelot"
                                 />
                                 <FactCard
-                                    v-if="metadata"
+                                    v-if="metadata?.spotify?.features?.tempo"
                                     :primary-text="
                                         Math.round(
                                             metadata.spotify.features.tempo
@@ -281,7 +283,10 @@ const onSpotifyUrlClick = () => {
             </div>
             <div class="relative w-full mt-4">
                 <div class="spotify__features__circles">
-                    <Card v-for="circle in circles" class="p-2">
+                    <Card
+                        v-for="circle in circles"
+                        class="p-2"
+                    >
                         <ProgressCircle
                             v-if="circle.key === 'loudness'"
                             v-model="circle.value"
@@ -311,19 +316,6 @@ const onSpotifyUrlClick = () => {
                     </Card>
                 </div>
             </div>
-            <Card v-if="recommendations.length" class="p-4 mt-4">
-                <h2 class="!text-left">Similar Songs</h2>
-                <ExternalEntry
-                    v-for="(recommendation, index) in recommendations"
-                    :key="index"
-                    :index="index"
-                    :song="recommendation"
-                    can-import
-                    cannot-add
-                    with-album
-                    with-cover
-                />
-            </Card>
         </div>
     </div>
 </template>
@@ -347,6 +339,10 @@ const onSpotifyUrlClick = () => {
 </style>
 
 <style lang="scss" scoped>
+.track {
+    height: 100%;
+}
+
 .track__data .upper {
     display: grid;
     grid-template-columns: fit-content(100%) minmax(500px, 1fr);

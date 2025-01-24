@@ -310,7 +310,10 @@ const formatLoudness = (loudness: number) => {
 };
 </script>
 <template>
-    <AmbientBackground :src="player.song.cover" direction="to top right" />
+    <AmbientBackground
+        :src="player.song.cover"
+        direction="to top right"
+    />
     <div class="insights">
         <h1>
             <span class="material-symbols-rounded">insights</span>
@@ -391,24 +394,18 @@ const formatLoudness = (loudness: number) => {
 
 <style scoped lang="scss">
 .meters {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+    display: grid;
+    grid-template-rows: repeat(5, max-content) 1fr;
+    width: 100%;
     gap: 1em;
     padding: 0.5em;
     grid-column: 1 / -1;
     overflow: hidden;
 
     .stereo-field {
-        align-self: center;
-        aspect-ratio: 1;
-        flex: 1;
-        position: relative;
-        height: 100%;
+        overflow: hidden;
 
         .inner {
-            position: absolute;
-            inset: 0;
             aspect-ratio: 1;
             height: 100%;
             margin: auto;
@@ -424,6 +421,7 @@ const formatLoudness = (loudness: number) => {
         grid-template-columns: 1ch 1fr;
         align-items: center;
         gap: 1em;
+        width: 100%;
 
         .label {
             font-size: 0.8em;
@@ -476,6 +474,7 @@ const formatLoudness = (loudness: number) => {
 .right {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: max-content 1fr;
     gap: 1em;
     overflow: hidden;
 

@@ -192,9 +192,9 @@ class Audius(metaclass=Singleton):
         async with aiohttp.ClientSession() as session:
             async with session.get(endpoint) as response:
                 self._logger.debug("search response: %s", response.status)
-                data = await response.json()
-                if not data["data"]:
-                    self._logger.debug("no data found")
+                data = dict(await response.json())
+                if not data.get("data"):
+                    self._logger.debug("no data found (%s)", data)
                     return []
                 return [
                     AudiusTrack(track)
